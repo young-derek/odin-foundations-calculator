@@ -16,8 +16,6 @@ buttons.forEach(button => {
 
         buttonValue = event.target.value;
 
-        console.log(buttonValue);
-
         if (buttonValue >= 0 && buttonValue <= 9) {
 
             if (typeLastClicked != "operator" && typeLastClicked != "equals") {
@@ -60,12 +58,11 @@ buttons.forEach(button => {
 
         if (buttonValue === "backspace") {
             if (typeLastClicked === "number") {
-                results.textContent = results.textContent.slice(
-                    0, results.textContent.length - 1);
+                results.textContent = results.textContent.slice(0, results.textContent.length - 1);
             }
         }
 
-        if (buttonValue.match(/[\/*+-]/)) {
+        if (buttonValue.match(/[\/\*\+\-]/)) {
 
             currentNumber = parseFloat(results.textContent);
 
@@ -121,9 +118,13 @@ buttons.forEach(button => {
 
         if (buttonValue === ".") {
 
-            if (typeLastClicked === "number"
-                && !results.textContent.match(/\./)) {
-                results.textContent += buttonValue;
+            if (typeLastClicked === "operator") {
+                results.textContent = '';
+                if (!results.textContent.match(/\./)) {
+                    results.textContent += buttonValue;
+                    typeLastClicked = "number";
+            }
+
             }
             else {
 
@@ -142,8 +143,12 @@ buttons.forEach(button => {
             history.textContent += buttonValue;
         else if (buttonValue != "backspace" && typeLastClicked != "equals")
             history.textContent += " " + buttonValue + " ";
-        else if (buttonValue === "backspace")
-            history.textContent = history.textContent.slice(0, -1);
+        else if (buttonValue === "backspace" && typeLastClicked === "number") {
+            console.log(history.textContent.slice(history.textContent.length - 1) >= 0);
+            if (history.textContent.slice(history.textContent.length - 1) != " ")
+                history.textContent = history.textContent.slice(0, -1);
+        }
+
         else if (typeLastClicked === "equals")
             history.textContent = runningTotal;
     })
