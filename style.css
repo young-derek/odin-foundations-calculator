@@ -54,6 +54,7 @@ body {
 button {
     width: 24%;
     height: 99%;
+    font-size: 17px;
 }
 
 #one-over-x,
