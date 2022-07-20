@@ -2,12 +2,9 @@ const buttons = Array.from(document.getElementsByTagName('button'));
 const display = document.getElementById('display');
 let currentNumber = 0;
 let runningTotal = 0;
-let priorNumber = 0;
 let operator;
-let buttonPressed = "";
-let operatorPressed = true;
-let numberPressed = false;
-let equalsPressed = false;
+let typeLastClicked = "operator";
+let buttonValue;
 let runningTotalExists = false;
 
 display.textContent = 0;
@@ -15,43 +12,63 @@ display.textContent = 0;
 buttons.forEach(button => {
     button.addEventListener('click', event => {
 
-        if (event.target.value >= 0 && event.target.value <= 9) {
-            if (operatorPressed === false && equalsPressed === false) {
-                display.textContent += event.target.value;
+        buttonValue = event.target.value;
+
+        console.log(buttonValue);
+
+        if (buttonValue >= 0 && buttonValue <= 9) {
+
+            if (typeLastClicked != "operator" && typeLastClicked != "equals") {
+                display.textContent += buttonValue;
             }
-            else if (operatorPressed === true) {
-                display.textContent = event.target.value;
-                operatorPressed = false;
+
+            else if (typeLastClicked === "operator") {
+                display.textContent = buttonValue;
             }
-            if (equalsPressed === true) {
-                display.textContent = event.target.value;
+
+            if (typeLastClicked === "equals") {
+                display.textContent = buttonValue;
+                operator = "";
                 runningTotal = 0;
-                equalsPressed = false;
+                runningTotalExists = false;
+                currentNumber = parseFloat(display.textContent);
             }
-            numberPressed = true;
+
+            typeLastClicked = "number";
         }
 
-        if (event.target.value === "x^2") {
+        if (buttonValue === "x^2") {
 
+            currentNumber = parseFloat(display.textContent);
+            runningTotal = currentNumber * currentNumber;
+            display.textContent = Math.round(runningTotal * 100000000) / 100000000;
         }
 
-        if (event.target.value === "clear") {
-
+        if (buttonValue === "clear") {
+            currentNumber = 0;
+            runningTotal = 0;
+            operator = "";
+            typeLastClicked = "operator";
+            runningTotalExists = false;
+            buttonValue = "";
+            display.textContent = 0;
         }
 
-        if (event.target.value === "backspace") {
-
+        if (buttonValue === "backspace") {
+            if (typeLastClicked === "number") {
+                display.textContent = display.textContent.slice(
+                    0, display.textContent.length - 1);
+            }
         }
 
-        if (event.target.value.match(/[\/*+-]/)) {
+        if (buttonValue.match(/[\/*+-]/)) {
 
-            currentNumber = parseInt(display.textContent);
+            currentNumber = parseFloat(display.textContent);
 
-            if (numberPressed === true) {
+            if (typeLastClicked === "number") {
 
-                if (runningTotalExists === true) {
+                if (runningTotalExists) {
 
-                    console.log(operator);
                     if (operator === "+")
                         runningTotal = Add(runningTotal, currentNumber);
                     else if (operator === "-")
@@ -61,7 +78,7 @@ buttons.forEach(button => {
                     else if (operator === "/")
                         runningTotal = Divide(runningTotal, currentNumber);
 
-                    display.textContent = runningTotal;
+                    display.textContent = Math.round(runningTotal * 100000000) / 100000000;
                 }
 
                 else if (runningTotalExists === false) {
@@ -69,17 +86,15 @@ buttons.forEach(button => {
                     runningTotalExists = true;
                 }
             }
-
-            operator = event.target.value;
-            operatorPressed = true;
-            numberPressed = false;
+            operator = buttonValue;
+            typeLastClicked = "operator";
         }
 
-        if (event.target.value === "=") {
+        if (buttonValue === "=") {
 
             if (runningTotalExists === true) {
-                if (equalsPressed === false)
-                    currentNumber = parseInt(display.textContent);
+                if (typeLastClicked != "equals")
+                    currentNumber = parseFloat(display.textContent);
 
                 if (operator === "+")
                     runningTotal = Add(runningTotal, currentNumber);
@@ -90,31 +105,29 @@ buttons.forEach(button => {
                 else if (operator === "/")
                     runningTotal = Divide(runningTotal, currentNumber);
 
-                console.log(runningTotal);
-
-                display.textContent = runningTotal;
-                numberPressed = false;
+                display.textContent = Math.round(runningTotal * 100000000) / 100000000;
             }
-            equalsPressed = true;
-
+            typeLastClicked = "equals";
         }
 
-        if (event.target.value === ".") {
+        if (buttonValue === ".") {
 
+            if (typeLastClicked === "number"
+                && !display.textContent.match(/\./)) {
+                display.textContent += buttonValue;
+            }
+            else {
+
+            }
         }
 
-        if (event.target.value === "+/-") {
-
+        if (buttonValue === "invert") {
+            if (typeLastClicked === "number") {
+                display.textContent *= -1;
+            }
         }
-
     })
 });
-
-function Operation(firstNumber, secondNumber, operator) {
-    if (operator === "+") {
-
-    }
-}
 
 function Add(firstNumber, secondNumber) {
     return firstNumber + secondNumber;
