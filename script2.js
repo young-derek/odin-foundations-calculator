@@ -2,75 +2,116 @@ const buttons = Array.from(document.getElementsByTagName('button'));
 const display = document.getElementById('display');
 const results = document.getElementById('results');
 const history = document.getElementById('history');
-let inputString = "0";
-let currentNumber = 0;
-let runningTotal = 0;
+let inputString = "";
+let currentNumber = null;
+let priorNumber = null;
+let runningTotal = null;
 let buttonPressed;
-let priorButtonPressed;
-let operator;
+let inputHistory = "";
+let operator = null;
+
+results.textContent = 0;
 
 buttons.forEach(button => {
     button.addEventListener('click', event => {
 
         buttonPressed = event.target.value;
-        console.log(`inputString @ start: ${inputString}`)
-        console.log(`runningTotal @ start: ${runningTotal}`)
 
-        // Add number input to input string
-        if (buttonPressed >= 0 && buttonPressed <= 9) {
-            if (inputString != 0)
-            {
-                inputString += buttonPressed;
-            }
-            else {
-                inputString = buttonPressed;
-            }
+        if (buttonPressed >= 0) {
+            inputString += buttonPressed;
+            results.textContent = inputString;
         }
 
-        // Take action if input is an operator
-        if (/[\/\*\-\+]/.test(buttonPressed) && inputString != "") {
+        if (buttonPressed.match(/[\/\*\-\+\=]/)) {
+            if (runningTotal === null)
+            {
+                if (inputString)
+                {
+                    runningTotal = parseFloat(inputString);
+                    inputString = ""
+                }
+            }
+            else if (currentNumber === null)
+            {
+                if (inputString)
+                {
+                    currentNumber = parseFloat(inputString);
+                    inputString = "";
+                    if (operator === "+")
+                    {
+                        runningTotal += currentNumber;
+                    }
+                    else if (operator === "-")
+                    {
+                        runningTotal -= currentNumber;
+                    }
+                    else if (operator === "*")
+                    {
+                        runningTotal *= currentNumber;
+                    }
+                    else if (operator === "/")
+                    {
+                        runningTotal /= currentNumber;
+                    }
+                    currentNumber = null;
+                }
+            }
             operator = buttonPressed;
-            if (operator === "+") {
-                runningTotal += parseFloat(inputString);
-            }
-            else if (operator === "-") {
-                runningTotal -= parseFloat(inputString);
-            }
-            else if (operator === "*") {
-                runningTotal *= parseFloat(inputString);
-            }
-            else if (operator === "/") {
-                runningTotal /= parseFloat(inputString);
-            }
+            results.textContent = runningTotal;
+        }
+
+        if (buttonPressed === "clear") {
+            results.textContent = 0;
+            runningTotal = null;
+            currentNumber = null;
+            operator = null;
             inputString = "";
         }
 
-
-        if (buttonPressed === "=") {
-            if (operator === "+") {
-
-            }
-            else if (operator === "-") {
-
-            }
-            else if (operator === "-") {
-
-            }
-            else if (operator === "-") {
-
+        if (buttonPressed === "backspace")
+        {
+            if (inputString)
+            {
+                inputString = inputString.slice(0, -1);
+                results.textContent = inputString;
             }
         }
 
+        if (buttonPressed === "x^2")
+        {
+            if (inputString)
+            {
+                inputString = parseFloat(inputString * inputString);
+                results.textContent = inputString;
+            }
+            else if (parseFloat(results.textContent) === runningTotal)
+            {
+                runningTotal *= runningTotal;
+                results.textContent = runningTotal;
+            }
+        }
 
+        if (buttonPressed === "invert")
+        {
+            if (inputString)
+            {
+                inputString *= -1;
+                results.textContent = inputString;
+            }
+            else if (parseFloat(results.textContent) === runningTotal)
+            {
+                runningTotal *= -1;
+                results.textContent = runningTotal;
+            }
+        }
 
-        // currentNumber = parseFloat(inputString);
-        priorButtonPressed = event.target.value;
-
-        results.textContent = inputString;
-
-        console.log(`inputString @ end: ${inputString}`)
-        console.log(`runningTotal @ end: ${runningTotal}`)
+        if (buttonPressed === ".")
+        {
+            if (!(inputString.match(/\./)))
+            {
+                inputString += ".";
+                results.textContent = inputString;
+            }
+        }
     })
-
-    results.textContent = inputString;
 });
