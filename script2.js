@@ -28,6 +28,7 @@ buttons.forEach(button => {
                 if (inputString)
                 {
                     runningTotal = parseFloat(inputString);
+                    history.textContent = runningTotal;
                     inputString = ""
                 }
             }
@@ -53,6 +54,11 @@ buttons.forEach(button => {
                     {
                         runningTotal /= currentNumber;
                     }
+                    history.textContent += ` ${operator} ${currentNumber}`;
+                    if (operator === "=")
+                    {
+                        history.textContent = runningTotal;
+                    }
                     currentNumber = null;
                 }
             }
@@ -66,6 +72,7 @@ buttons.forEach(button => {
             currentNumber = null;
             operator = null;
             inputString = "";
+            history.textContent = "";
         }
 
         if (buttonPressed === "backspace")
@@ -75,12 +82,19 @@ buttons.forEach(button => {
                 inputString = inputString.slice(0, -1);
                 results.textContent = inputString;
             }
+            else if (parseFloat(results.textContent) === runningTotal)
+            {
+                results.textContent = results.textContent.slice(0, -1);
+                runningTotal = parseFloat(results.textContent);
+                results.textContent = runningTotal;
+            }
         }
 
         if (buttonPressed === "x^2")
         {
             if (inputString)
             {
+                history.textContent += ` sqr(${inputString})`;
                 inputString = parseFloat(inputString * inputString);
                 results.textContent = inputString;
             }
@@ -107,11 +121,17 @@ buttons.forEach(button => {
 
         if (buttonPressed === ".")
         {
+            if (!(inputString))
+            {
+                inputString += "0.";
+                results.textContent = inputString;
+            }
             if (!(inputString.match(/\./)))
             {
                 inputString += ".";
                 results.textContent = inputString;
             }
         }
+
     })
 });
