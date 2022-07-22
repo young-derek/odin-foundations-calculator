@@ -100,6 +100,7 @@ buttons.forEach(button => {
             }
             else if (parseFloat(results.textContent) === runningTotal)
             {
+                history.textContent += ` sqr(${runningTotal})`;
                 runningTotal *= runningTotal;
                 results.textContent = runningTotal;
             }
