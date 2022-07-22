@@ -16,17 +16,26 @@ buttons.forEach(button => {
     button.addEventListener('click', event => {
 
         buttonPressed = event.target.value
-        function Calculate(buttonPressed)
+        Calculate(buttonPressed);
     })
 });
 
-buttons.forEach(button => {
-    button.addEventListener('keypress', event => {
+// buttons.forEach(button => {
+//     button.addEventListener('keypress', event => {
 
-        buttonPressed = event.key
-        function Calculate(buttonPressed)
-    })
-});
+//         console.log(event.key);
+//         buttonPressed = event.key
+//         Calculate(buttonPressed)
+//     })
+// });
+
+document.addEventListener('keydown', event => {
+    
+    event.preventDefault();
+    console.log(event.key);
+    buttonPressed = event.key;
+    Calculate(buttonPressed);
+})
 
 function Calculate(event) {
 
@@ -35,7 +44,7 @@ function Calculate(event) {
         results.textContent = inputString;
     }
 
-    if (buttonPressed.match(/[\/\*\-\+\=]/)) {
+    if (buttonPressed.match(/[\/\*\-\+\=Enter]/)) {
         if (runningTotal === null) {
             if (inputString) {
                 runningTotal = parseFloat(inputString);
@@ -60,7 +69,7 @@ function Calculate(event) {
                     runningTotal /= currentNumber;
                 }
                 history.textContent += ` ${operator} ${currentNumber}`;
-                if (operator === "=") {
+                if (operator === "=" || operator === "Enter") {
                     history.textContent = runningTotal;
                 }
                 currentNumber = null;
@@ -70,7 +79,7 @@ function Calculate(event) {
         results.textContent = runningTotal;
     }
 
-    if (buttonPressed === "clear") {
+    if (buttonPressed === "clear" || buttonPressed === "Escape") {
         results.textContent = 0;
         runningTotal = null;
         currentNumber = null;
@@ -79,7 +88,7 @@ function Calculate(event) {
         history.textContent = "";
     }
 
-    if (buttonPressed === "backspace") {
+    if (buttonPressed === "backspace" || buttonPressed === "Backspace") {
         if (inputString) {
             inputString = inputString.slice(0, -1);
             results.textContent = inputString;
