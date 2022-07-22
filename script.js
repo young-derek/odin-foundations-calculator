@@ -20,19 +20,9 @@ buttons.forEach(button => {
     })
 });
 
-// buttons.forEach(button => {
-//     button.addEventListener('keypress', event => {
-
-//         console.log(event.key);
-//         buttonPressed = event.key
-//         Calculate(buttonPressed)
-//     })
-// });
-
 document.addEventListener('keydown', event => {
     
     event.preventDefault();
-    console.log(event.key);
     buttonPressed = event.key;
     Calculate(buttonPressed);
 })
